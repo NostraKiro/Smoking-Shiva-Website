@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#171916">
+  <meta name="description" content="Adult-only product catalog. Product availability and orders are confirmed manually.">
+  <title>Storefront Starter</title>
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <script src="assets/js/config.js" defer></script>
+  <script src="assets/js/products.js" defer></script>
+  <script src="assets/js/app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+
+  <section id="age-gate" class="age-gate" aria-labelledby="age-title">
+    <div class="age-card">
+      <p class="eyebrow">AGE-RESTRICTED PRODUCTS</p>
+      <div class="brand-mark" aria-hidden="true">18+</div>
+      <h1 id="age-title">Are you 18 or older?</h1>
+      <p class="age-copy">This website is intended only for adults aged 18 and above. Please confirm your legal age to continue.</p>
+      <div class="age-actions">
+        <button id="age-confirm" class="button button-primary" type="button">Yes, I am 18 or older</button>
+        <button id="age-decline" class="button button-secondary" type="button">No, I am under 18</button>
+      </div>
+      <p id="age-message" class="form-message" role="status" aria-live="polite"></p>
+      <p class="tiny-note">Age declaration is not a substitute for identity checks required for an actual purchase and delivery.</p>
+    </div>
+  </section>
+
+  <div id="storefront" hidden>
+    <div class="legal-ribbon" role="note">
+      <strong>GOVERNMENT WARNING:</strong> The sale or distribution of vaporized nicotine and non-nicotine products to or by persons below eighteen (18) years of age is illegal. These products are harmful and contain nicotine which is a highly addictive substance. It is not recommended for use by nonsmokers.
+    </div>
+
+    <header class="site-header">
+      <a class="wordmark" href="#top" aria-label="Go to homepage"><span class="wordmark-dot"></span><span id="brand-name">YOUR SHOP</span></a>
+      <nav class="main-nav" aria-label="Main navigation">
+        <a href="#catalog">Catalog</a>
+        <a href="#how-to-order">How to order</a>
+        <a href="#policies">Policies</a>
+      </nav>
+      <a class="cart-link" href="#cart" aria-label="View shopping cart">Cart <span id="cart-count" class="cart-count">0</span></a>
+    </header>
+
+    <main id="main-content">
+      <section id="top" class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">ADULT-ONLY CATALOG</p>
+          <h1>Good design.<br><span>Clear information.</span></h1>
+          <p class="hero-description">Browse the catalog, prepare an order request, and wait for the shop to confirm availability and details. Submitting a request does not complete a purchase.</p>
+          <a class="button button-primary" href="#catalog">Browse catalog <span aria-hidden="true">↘</span></a>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+          <div class="art-orbit orbit-one"></div>
+          <div class="art-orbit orbit-two"></div>
+          <div class="art-core">18<span>+</span></div>
+          <span class="art-caption">ADULTS ONLY</span>
+        </div>
+      </section>
+
+      <section class="compliance-note" aria-label="Important product notice">
+        <span class="notice-icon" aria-hidden="true">!</span>
+        <div>
+          <h2>For adults only</h2>
+          <p>Products, product descriptions, labels, required health warnings, seller registration, age checks, and delivery procedures must be verified by the shop before launch. No health or reduced-risk claims are made on this starter site.</p>
+        </div>
+      </section>
+
+      <section id="catalog" class="catalog-section">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">THE CATALOG</p>
+            <h2>Browse products</h2>
+          </div>
+          <label class="search-field">
+            <span class="sr-only">Search catalog</span>
+            <span aria-hidden="true">⌕</span>
+            <input id="search-input" type="search" placeholder="Search products" autocomplete="off">
+          </label>
+        </div>
+        <div id="demo-banner" class="demo-banner" role="status">DEMO MODE — sample items and prices only. Do not accept real orders until product, seller, age-verification, delivery, privacy, and hosting compliance are reviewed.</div>
+        <div id="category-filters" class="category-filters" aria-label="Filter products">
+          <button class="filter-chip active" type="button" data-category="all" aria-pressed="true">All items</button>
+        </div>
+        <div id="product-grid" class="product-grid" aria-live="polite"></div>
+        <p id="empty-state" class="empty-state" hidden>No products match your search.</p>
+      </section>
+
+      <section id="cart" class="cart-section">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">YOUR SELECTION</p>
+            <h2>Shopping cart <span id="cart-heading-count" class="heading-count">(0)</span></h2>
+          </div>
+          <button id="clear-cart" class="text-button" type="button">Clear cart</button>
+        </div>
+        <div id="cart-items" class="cart-items"></div>
+        <div id="cart-empty" class="cart-empty">Your cart is empty. Browse the catalog to add items.</div>
+        <div class="cart-summary">
+          <div><span>Estimated subtotal</span><strong id="cart-subtotal">₱0.00</strong></div>
+          <p>Estimate only. Availability, delivery, and final total are confirmed by the shop before any purchase.</p>
+          <a href="#order-request" class="button button-primary">Continue to order request <span aria-hidden="true">→</span></a>
+        </div>
+      </section>
+
+      <section id="order-request" class="order-section">
+        <div class="order-intro">
+          <p class="eyebrow">NO AUTOMATIC PAYMENT</p>
+          <h2>Request an order</h2>
+          <p>Send the shop your requested items. The shop will confirm availability and next steps manually. Do not submit an ID image, payment-card details, or other sensitive documents through this form.</p>
+        </div>
+        <form id="order-form" class="order-form">
+          <div class="form-grid">
+            <label>Full name <span aria-hidden="true">*</span>
+              <input id="customer-name" name="customerName" autocomplete="name" maxlength="100" required>
+            </label>
+            <label>Email address <span aria-hidden="true">*</span>
+              <input id="customer-email" name="customerEmail" type="email" autocomplete="email" maxlength="150" required>
+            </label>
+            <label>Contact number <span aria-hidden="true">*</span>
+              <input id="customer-phone" name="customerPhone" type="tel" autocomplete="tel" inputmode="tel" maxlength="30" required>
+            </label>
+            <label>City / municipality <span aria-hidden="true">*</span>
+              <input id="customer-city" name="customerCity" autocomplete="address-level2" maxlength="100" required>
+            </label>
+          </div>
+          <label class="consent-row"><input id="privacy-consent" type="checkbox" required> <span>I agree that the shop may use these details to respond to this order request. See the shop's privacy notice before launch.</span></label>
+          <p class="small-print">By submitting, you are requesting a response—not completing a purchase. The shop must verify legal age using the required process before accepting a purchase, and age must be checked again for delivery as applicable. This starter does not collect or verify government ID.</p>
+          <button id="submit-order" class="button button-primary" type="submit">Prepare order request <span aria-hidden="true">↗</span></button>
+          <p id="order-status" class="form-message" role="status" aria-live="polite"></p>
+          <div id="order-preview" class="order-preview" hidden>
+            <h3>Order request preview</h3>
+            <pre id="order-preview-text"></pre>
+            <div class="preview-actions">
+              <button id="copy-order" class="button button-secondary" type="button">Copy request</button>
+              <a id="email-order" class="button button-primary" href="#">Open email draft</a>
+            </div>
+            <p class="small-print">In demo mode, nothing is sent. In production, opening an email draft does not send it automatically; the customer must press Send in their email app.</p>
+          </div>
+        </form>
+      </section>
+
+      <section id="how-to-order" class="steps-section">
+        <p class="eyebrow">A SIMPLE PROCESS</p>
+        <h2>How order requests work</h2>
+        <div class="steps-grid">
+          <article><span>01</span><h3>Choose items</h3><p>Add catalog items to the cart and review the estimated subtotal.</p></article>
+          <article><span>02</span><h3>Send a request</h3><p>Share basic contact details so the shop can respond to the request.</p></article>
+          <article><span>03</span><h3>Wait for confirmation</h3><p>The shop confirms availability, final price, compliant age verification, and delivery arrangements.</p></article>
+        </div>
+      </section>
+
+      <section id="policies" class="policies-section">
+        <p class="eyebrow">BEFORE LAUNCH</p>
+        <h2>Shop information</h2>
+        <div class="policy-grid">
+          <article><h3>Age & delivery</h3><p>Purchases are restricted to adults aged 18+. The retailer must verify age using a valid government-issued ID showing photo and age/date of birth, and delivery procedures must comply with applicable law.</p></article>
+          <article><h3>Privacy</h3><p>Publish a real privacy notice identifying the seller, the information collected, purpose, retention, and contact for privacy requests. Collect only what is necessary.</p></article>
+          <article><h3>Product compliance</h3><p>List only products the retailer is legally allowed to sell. Verify packaging and health warnings, required fiscal marks, minimum prices, and any applicable seller-registration requirements before publishing catalog data.</p></article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <a class="wordmark" href="#top"><span class="wordmark-dot"></span><span id="footer-brand-name">YOUR SHOP</span></a>
+      <p>Adult-only catalog. Order requests require manual confirmation.</p>
+      <p class="footer-warning">The sale or distribution of these products to or by persons below eighteen (18) years of age is illegal. These products are harmful. Products containing nicotine are addictive and are not recommended for nonsmokers.</p>
+      <p class="copyright">© <span id="current-year"></span> <span id="footer-copyright-name">YOUR SHOP</span></p>
+    </footer>
+  </div>
+</body>
+</html>
