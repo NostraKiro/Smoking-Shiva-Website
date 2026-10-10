@@ -1,6 +1,6 @@
-/* Site-wide settings. Replace placeholders only after client approval. */
+
 window.SHOP_CONFIG = {
-  shopName: "YOUR SHOP NAME",
+  shopName: "Smoking Shiva",
   orderEmail: "orders@example.com",
   currency: "PHP",
   minimumAge: 18,
