@@ -807,9 +807,15 @@ const printReceiptButton = byId("print-receipt");
   }
 
   if (printReceiptButton) {
-    printReceiptButton.addEventListener("click", openPrintableReceipt);
-  }
+  printReceiptButton.addEventListener("click", (event) => {
+    event.preventDefault();
+    openPrintableReceipt();
+  });
 
+  printReceiptButton.style.position = "relative";
+  printReceiptButton.style.zIndex = "5";
+  printReceiptButton.style.pointerEvents = "auto";
+}
 
   function prepareOrder(event) {
     event.preventDefault();
