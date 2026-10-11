@@ -33,8 +33,9 @@
   const orderStatus = byId("order-status");
   const orderPreview = byId("order-preview");
   const orderPreviewText = byId("order-preview-text");
-  const copyOrderButton = byId("copy-order");
-  const emailOrderLink = byId("email-order");
+const copyOrderButton = byId("copy-order");
+const emailOrderLink = byId("email-order");
+const printReceiptButton = byId("print-receipt");
 
   let selectedCategory = "all";
   let lastOrderText = "";
@@ -435,6 +436,380 @@
         : ""
     ].filter(Boolean).join("\n");
   }
+
+  
+  // ==========================================
+  // PRINTABLE RECEIPT
+  // ==========================================
+
+  function openPrintableReceipt() {
+    if (!lastOrderText) {
+      if (orderStatus) {
+        orderStatus.textContent =
+          "Please prepare your order request first.";
+      }
+      return;
+    }
+
+    const receiptWindow = window.open("", "_blank");
+
+    if (!receiptWindow) {
+      if (orderStatus) {
+        orderStatus.textContent =
+          "The receipt tab was blocked. Allow pop-ups for this website and try again.";
+      }
+      return;
+    }
+
+    const lines = getCartLines();
+    const customerName = byId("customer-name")?.value.trim() || "";
+    const customerEmail = byId("customer-email")?.value.trim() || "";
+    const customerPhone = byId("customer-phone")?.value.trim() || "";
+    const customerCity = byId("customer-city")?.value.trim() || "";
+
+    const shopName = config.shopName || "Smoking Shiva";
+    const messengerUrl =
+      config.messengerUrl || "https://m.me/shivamori.bermundo.4";
+
+    const receiptNumber =
+      "SS-" +
+      new Date().toISOString()
+        .replace(/[-:TZ.]/g, "")
+        .slice(0, 14);
+
+    const receiptDate = new Date().toLocaleString("en-PH", {
+      dateStyle: "medium",
+      timeStyle: "short"
+    });
+
+    const itemsHtml = lines.map(({ product, quantity }) => `
+      <tr>
+        <td>${escapeHtml(product.name)}</td>
+        <td class="center">${quantity}</td>
+        <td class="money">${escapeHtml(formatMoney(product.price))}</td>
+        <td class="money">${escapeHtml(
+          formatMoney(Number(product.price) * quantity)
+        )}</td>
+      </tr>
+    `).join("");
+
+    const receiptHtml = `
+      <!doctype html>
+      <html lang="en">
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>${escapeHtml(shopName)} — Order Request Receipt</title>
+
+        <style>
+          :root {
+            color-scheme: light;
+            --gold: #a37e2c;
+            --green: #006039;
+            --ink: #222;
+            --muted: #666;
+            --line: #ddd;
+          }
+
+          * { box-sizing: border-box; }
+
+          body {
+            margin: 0;
+            padding: 24px;
+            background: #f1f1f1;
+            color: var(--ink);
+            font-family: Arial, Helvetica, sans-serif;
+          }
+
+          .receipt {
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 36px;
+            background: white;
+            border-top: 7px solid var(--gold);
+            box-shadow: 0 4px 24px #00000012;
+          }
+
+          .header {
+            text-align: center;
+            padding-bottom: 22px;
+            border-bottom: 1px solid var(--line);
+          }
+
+          .header h1 {
+            margin: 0 0 8px;
+            letter-spacing: 2px;
+            font-size: 27px;
+          }
+
+          .eyebrow {
+            color: var(--gold);
+            font-size: 11px;
+            font-weight: bold;
+            letter-spacing: 2px;
+          }
+
+          .status {
+            margin: 22px 0;
+            padding: 13px;
+            border: 1px solid var(--gold);
+            background: #fffaf0;
+            text-align: center;
+            font-weight: bold;
+            letter-spacing: .5px;
+          }
+
+          .details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px 24px;
+            margin: 22px 0;
+          }
+
+          .detail-label {
+            display: block;
+            margin-bottom: 4px;
+            color: var(--muted);
+            font-size: 12px;
+          }
+
+          .detail-value {
+            overflow-wrap: anywhere;
+            font-weight: 600;
+          }
+
+          h2 {
+            margin: 26px 0 12px;
+            font-size: 17px;
+          }
+
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+          }
+
+          th, td {
+            padding: 12px 8px;
+            border-bottom: 1px solid var(--line);
+            text-align: left;
+          }
+
+          th {
+            background: #f7f5ef;
+            font-size: 11px;
+            text-transform: uppercase;
+          }
+
+          .center { text-align: center; }
+          .money { text-align: right; white-space: nowrap; }
+
+          .total {
+            margin-top: 18px;
+            text-align: right;
+            font-size: 20px;
+            font-weight: bold;
+          }
+
+          .notice {
+            margin-top: 24px;
+            padding: 15px;
+            background: #f7f5ef;
+            font-size: 13px;
+            line-height: 1.6;
+          }
+
+          .messenger {
+            margin-top: 24px;
+            padding: 20px;
+            border: 1px solid var(--line);
+            text-align: center;
+          }
+
+          .messenger a {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 12px 18px;
+            background: var(--green);
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+          }
+
+          .actions {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 24px auto;
+          }
+
+          .actions button, .actions a {
+            border: 0;
+            padding: 12px 16px;
+            background: var(--gold);
+            color: white;
+            font: inherit;
+            font-weight: bold;
+            text-decoration: none;
+            cursor: pointer;
+          }
+
+          .actions .secondary {
+            background: #222;
+          }
+
+          .footer {
+            margin-top: 25px;
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.5;
+            text-align: center;
+          }
+
+          @media (max-width: 520px) {
+            body { padding: 0; }
+            .receipt { padding: 22px 15px; }
+            .details { grid-template-columns: 1fr; }
+            table { font-size: 11px; }
+            th, td { padding: 9px 4px; }
+            .total { font-size: 18px; }
+          }
+
+          @media print {
+            body { padding: 0; background: white; }
+            .receipt {
+              max-width: none;
+              padding: 10px;
+              border-top: 4px solid var(--gold);
+              box-shadow: none;
+            }
+            .actions, .messenger a { display: none !important; }
+            .messenger { break-inside: avoid; }
+            .notice { break-inside: avoid; }
+            tr { break-inside: avoid; }
+          }
+        </style>
+      </head>
+
+      <body>
+        <main class="receipt">
+          <header class="header">
+            <p class="eyebrow">ADULT-ONLY CATALOG</p>
+            <h1>${escapeHtml(shopName.toUpperCase())}</h1>
+            <p>Order Request Receipt</p>
+          </header>
+
+          <div class="status">
+            ORDER REQUEST — AWAITING CONFIRMATION
+          </div>
+
+          <div class="details">
+            <div>
+              <span class="detail-label">Request reference</span>
+              <span class="detail-value">${escapeHtml(receiptNumber)}</span>
+            </div>
+            <div>
+              <span class="detail-label">Date prepared</span>
+              <span class="detail-value">${escapeHtml(receiptDate)}</span>
+            </div>
+            <div>
+              <span class="detail-label">Customer</span>
+              <span class="detail-value">${escapeHtml(customerName)}</span>
+            </div>
+            <div>
+              <span class="detail-label">Contact number</span>
+              <span class="detail-value">${escapeHtml(customerPhone)}</span>
+            </div>
+            <div>
+              <span class="detail-label">Email</span>
+              <span class="detail-value">${escapeHtml(customerEmail)}</span>
+            </div>
+            <div>
+              <span class="detail-label">City / Municipality</span>
+              <span class="detail-value">${escapeHtml(customerCity)}</span>
+            </div>
+          </div>
+
+          <h2>Requested items</h2>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th class="center">Qty</th>
+                <th class="money">Unit price</th>
+                <th class="money">Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${itemsHtml}
+            </tbody>
+          </table>
+
+          <div class="total">
+            Estimated subtotal: ${escapeHtml(formatMoney(subtotal()))}
+          </div>
+
+          <div class="notice">
+            <strong>Important:</strong> This document records a request only.
+            It is not a confirmed order, proof of payment, or sales invoice.
+            Delivery fees, product availability, and the final total must be
+            confirmed directly by the shop. No payment has been processed
+            by this website.
+            ${config.demoMode ? "<br><br><strong>DEMO MODE:</strong> This request is for testing only. Do not treat it as a real order." : ""}
+          </div>
+
+          <section class="messenger">
+            <h2>What to do next</h2>
+            <p>
+              <strong>1.</strong> Take a screenshot of this receipt,
+              or print it / save it as a PDF.
+            </p>
+            <p>
+              <strong>2.</strong> Open Smoking Shiva Messenger and send
+              the screenshot to the shop.
+            </p>
+            <p>
+              <strong>3.</strong> Wait for the shop to confirm availability,
+              delivery arrangements, and the final total.
+            </p>
+            <a href="${escapeHtml(messengerUrl)}"
+               target="_blank"
+               rel="noopener noreferrer">
+              Send receipt through Messenger
+            </a>
+          </section>
+
+          <div class="actions">
+            <button onclick="window.print()">Print / Save as PDF</button>
+            <button class="secondary"
+                    onclick="window.open('${escapeHtml(messengerUrl)}', '_blank', 'noopener,noreferrer')">
+              Open Messenger
+            </button>
+          </div>
+
+          <footer class="footer">
+            ${escapeHtml(shopName)} · ${escapeHtml(config.deliveryRegion || "Albay")}
+            <br>
+            Adult-only catalog. Follow applicable age-verification and delivery requirements.
+            <br>
+            Keep this receipt private because it contains your contact details.
+          </footer>
+        </main>
+      </body>
+      </html>
+    `;
+
+    receiptWindow.document.open();
+    receiptWindow.document.write(receiptHtml);
+    receiptWindow.document.close();
+  }
+
+  if (printReceiptButton) {
+    printReceiptButton.addEventListener("click", openPrintableReceipt);
+  }
+
 
   function prepareOrder(event) {
     event.preventDefault();
